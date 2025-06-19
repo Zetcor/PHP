@@ -6,25 +6,87 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $birthday = $_POST['birthday'];
     $phone = $_POST['phone'];
     $email = $_POST['email'];
-
     $street = $_POST['street'];
     $city = $_POST['city'];
     $province = $_POST['province'];
     $zipcode = $_POST['zipcode'];
     $country = $_POST['country'];
-
     $username = $_POST['username'];
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
-    if ($password !== $confirm_password) {
-        echo "<script>alert('Passwords do not match. Please try again.');window.history.back();</script>";
-    } else {
+    $errors = [];
 
-        $line = implode("|", [$fullname, $gender, $birthday, $phone, $email, $street, $city, $province, $zipcode, $country, $username, $password]) . "\n";
+    if (!preg_match("/^[A-Za-z ]{2,50}$/", $fullname)) {
+        $errors[] = "Invalid full name.";
+    }
+
+    if (empty($gender)) {
+        $errors[] = "Gender is required.";
+    }
+
+    $birthdate = new DateTime($birthday);
+    $today = new DateTime();
+    $age = $today->diff($birthdate)->y;
+    if ($age < 18) {
+        $errors[] = "You must be at least 18 years old.";
+    }
+
+    if (!preg_match("/^09\d{9}$/", $phone)) {
+        $errors[] = "Phone number must start with 09 and be 11 digits.";
+    }
+
+    if (!preg_match("/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$/", $email)) {
+        $errors[] = "Invalid email address.";
+    }
+
+    if (!preg_match("/^[\w\s.,#-]{5,100}$/", $street)) {
+        $errors[] = "Invalid street address.";
+    }
+
+    if (!preg_match("/^[A-Za-z ]{2,50}$/", $city)) {
+        $errors[] = "Invalid city name.";
+    }
+
+    if (!preg_match("/^[A-Za-z ]{2,50}$/", $province)) {
+        $errors[] = "Invalid province/state name.";
+    }
+
+    if (!preg_match("/^\d{4}$/", $zipcode)) {
+        $errors[] = "Zip code must be exactly 4 digits.";
+    }
+
+    if (!preg_match("/^[A-Za-z ]+$/", $country)) {
+        $errors[] = "Invalid country name.";
+    }
+
+    if (!preg_match("/^\w{5,20}$/", $username)) {
+        $errors[] = "Username must be 5–20 characters with letters, numbers, or underscores.";
+    }
+
+    if (!preg_match("/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/", $password)) {
+        $errors[] = "Password must be at least 8 characters with uppercase, lowercase, number, and special character.";
+    }
+
+    if ($password !== $confirm_password) {
+        $errors[] = "Passwords do not match.";
+    }
+
+    if (!empty($errors)) {
+        $alert = implode("\\n", $errors);
+        echo "<script>alert('$alert'); window.history.back();</script>";
+        exit;
+    } else {
+        $line = implode("|", [
+            $fullname, $gender, $birthday, $phone, $email,
+            $street, $city, $province, $zipcode, $country,
+            $username, $password
+        ]) . "\n";
+
         file_put_contents("users.txt", $line, FILE_APPEND);
 
-        echo "<script>alert('Registration successful! Proceeding to login...');window.location.href = 'login.php'</script>";
+        echo "<script>alert('Registration successful! Redirecting...'); window.location.href = 'welcome.php';</script>";
+        exit;
     }
 }
 ?>
@@ -238,7 +300,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container my-5">
         <div class="card shadow-lg rounded p-4 bg-light">
             <h1 class="text-center">REGISTRATION</h1>
-            <form action="registration.php" method="post">
+            <form action="registration.php" method="POST">
                 <h2>Personal Information</h2>
                 <div class="mb-3">
                     <label for="fullname" class="form-label">Full Name</label>
@@ -246,7 +308,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="mb-3">
                     <label for="gender" class="form-label">Gender</label>
-                    <select class="form-select" id="gender" name="gender" required>
+                    <select class="form-select" id="gender" name="gender">
                         <option value="">Select your gender</option>
                         <option>Male</option>
                         <option>Female</option>
