@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $fullname = $_POST['fullname'];
@@ -73,23 +75,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (!empty($errors)) {
-        $alert = implode("\\n", $errors);
+        $alert = implode("\n", $errors);
         echo "<script>alert('$alert'); window.history.back();</script>";
         exit;
     } else {
         $line = implode("|", [
-            $fullname, $gender, $birthday, $phone, $email,
-            $street, $city, $province, $zipcode, $country,
-            $username, $password
+            $fullname,
+            $gender,
+            $birthday,
+            $phone,
+            $email,
+            $street,
+            $city,
+            $province,
+            $zipcode,
+            $country,
+            $username,
+            $password
         ]) . "\n";
 
         file_put_contents("users.txt", $line, FILE_APPEND);
 
-        echo "<script>alert('Registration successful! Redirecting...'); window.location.href = 'welcome.php';</script>";
+        $_SESSION['user'] = [
+            'fullname' => $fullname,
+            'gender' => $gender,
+            'birthday' => $birthday,
+            'phone' => $phone,
+            'email' => $email,
+            'street' => $street,
+            'city' => $city,
+            'province' => $province,
+            'zipcode' => $zipcode,
+            'country' => $country,
+            'username' => $username,
+            'password' => $password,
+            'confirm_password' => $confirm_password
+        ];
+
+        echo "<script>alert('Registration successful! Redirecting...');window.location.href='welcome.php';</script>";
         exit;
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -304,7 +332,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h2>Personal Information</h2>
                 <div class="mb-3">
                     <label for="fullname" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Enter your full name" required>
+                    <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Enter your full name">
                 </div>
                 <div class="mb-3">
                     <label for="gender" class="form-label">Gender</label>
@@ -317,15 +345,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <div class="mb-3">
                     <label for="birthday" class="form-label">Date of Birth</label>
-                    <input type="date" class="form-control" id="birthday" name="birthday" required>
+                    <input type="date" class="form-control" id="birthday" name="birthday">
                 </div>
                 <div class="mb-3">
                     <label for="phone" class="form-label">Phone Number</label>
-                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required>
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number">
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address">
                 </div>
 
                 <hr class="my-4">
@@ -333,23 +361,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h2 class="mt-4">Address Details</h2>
                 <div class="mb-3">
                     <label for="street" class="form-label">Street</label>
-                    <input type="text" class="form-control" id="street" name="street" placeholder="Enter your street address" required>
+                    <input type="text" class="form-control" id="street" name="street" placeholder="Enter your street address">
                 </div>
                 <div class="mb-3">
                     <label for="city" class="form-label">City</label>
-                    <input type="text" class="form-control" id="city" name="city" placeholder="Enter your city" required>
+                    <input type="text" class="form-control" id="city" name="city" placeholder="Enter your city">
                 </div>
                 <div class="mb-3">
                     <label for="province" class="form-label">Province/State</label>
-                    <input type="text" class="form-control" id="province" name="province" placeholder="Enter your province or state" required>
+                    <input type="text" class="form-control" id="province" name="province" placeholder="Enter your province or state">
                 </div>
                 <div class="mb-3">
                     <label for="zipcode" class="form-label">Zip Code</label>
-                    <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Enter your zipcode" required>
+                    <input type="text" class="form-control" id="zipcode" name="zipcode" placeholder="Enter your zipcode">
                 </div>
                 <div class="mb-3">
                     <label for="country" class="form-label">Country</label>
-                    <input type="text" class="form-control" id="country" name="country" placeholder="Enter your country" required>
+                    <input type="text" class="form-control" id="country" name="country" placeholder="Enter your country">
                 </div>
 
                 <hr class="my-4">
@@ -357,15 +385,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h2 class="mt-4">Account Details</h2>
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username">
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter a password" required>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter a password">
                 </div>
                 <div class="mb-3">
                     <label for="confirm_password" class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Re-enter your password" required>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Re-enter your password">
                 </div>
 
                 <div class="d-flex gap-2 mt-4">

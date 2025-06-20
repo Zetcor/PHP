@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user'])) {
+    header("Location: registration.php");
+    exit;
+}
+
+$user = $_SESSION['user'];
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -200,32 +212,48 @@
         </div>
     </nav>
 
+    <?php
+    $fullname = htmlspecialchars($user['fullname']);
+    $gender = htmlspecialchars($user['gender']);
+    $birthday = htmlspecialchars($user['birthday']);
+    $phone = htmlspecialchars($user['phone']);
+    $email = htmlspecialchars($user['email']);
+    $street = htmlspecialchars($user['street']);
+    $city = htmlspecialchars($user['city']);
+    $province = htmlspecialchars($user['province']);
+    $zipcode = htmlspecialchars($user['zipcode']);
+    $country = htmlspecialchars($user['country']);
+    $username = htmlspecialchars($user['username']);
+    $password = htmlspecialchars($user['password']);
+    $confirm_password = htmlspecialchars($user['confirm_password']);
+    ?>
+
     <div class="container my-5">
         <div class="card shadow-lg rounded p-4">
             <h2 class="text-center mb-4">Submitted Information</h2>
 
             <h4>Personal Information</h4>
-            <p><strong>Full Name:</strong> <?= htmlspecialchars($_POST['fullname']) ?></p>
-            <p><strong>Gender:</strong> <?= htmlspecialchars($_POST['gender']) ?></p>
-            <p><strong>Date of Birth:</strong> <?= htmlspecialchars($_POST['birthday']) ?></p>
-            <p><strong>Phone Number:</strong> <?= htmlspecialchars($_POST['phone']) ?></p>
-            <p><strong>Email:</strong> <?= htmlspecialchars($_POST['email']) ?></p>
+            <p><strong>Full Name:</strong> <?= $fullname ?></p>
+            <p><strong>Gender:</strong> <?= $gender ?></p>
+            <p><strong>Date of Birth:</strong> <?= $birthday ?></p>
+            <p><strong>Phone Number:</strong> <?= $phone ?></p>
+            <p><strong>Email:</strong> <?= $email ?></p>
 
             <hr>
 
             <h4>Address Details</h4>
-            <p><strong>Street:</strong> <?= htmlspecialchars($_POST['street']) ?></p>
-            <p><strong>City:</strong> <?= htmlspecialchars($_POST['city']) ?></p>
-            <p><strong>Province:</strong> <?= htmlspecialchars($_POST['province']) ?></p>
-            <p><strong>Zip Code:</strong> <?= htmlspecialchars($_POST['zipcode']) ?></p>
-            <p><strong>Country:</strong> <?= htmlspecialchars($_POST['country']) ?></p>
+            <p><strong>Street:</strong> <?= $street ?></p>
+            <p><strong>City:</strong> <?= $city ?></p>
+            <p><strong>Province:</strong> <?= $province ?></p>
+            <p><strong>Zip Code:</strong> <?= $zipcode ?></p>
+            <p><strong>Country:</strong> <?= $country ?></p>
 
             <hr>
 
             <h4>Account Details</h4>
-            <p><strong>Username:</strong> <?= htmlspecialchars($_POST['username']) ?></p>
-            <p><strong>Password:</strong> <?= str_repeat('*', strlen($_POST['password'])) ?></p>
-            <p><strong>Confirm Password:</strong> <?= str_repeat('*', strlen($_POST['confirm_password'])) ?></p>
+            <p><strong>Username:</strong> <?= $username ?></p>
+            <p><strong>Password:</strong> <?= str_repeat('*', strlen($password)) ?></p>
+            <p><strong>Confirm Password:</strong> <?= str_repeat('*', strlen($confirm_password)) ?></p>
 
             <div class="d-flex mt-4 justify-content-end">
                 <a href="logout.php" class="btn btn-danger">Logout</a>
