@@ -9,9 +9,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach ($users as $userLine) {
         $data = explode("|", $userLine);
 
-        if ($data[10] === $inputUsername && $data[11] === $inputPassword) {
+        if (trim($data[10]) === trim($inputUsername) && trim($data[11]) === trim($inputPassword)) {
             $found = true;
-            $_SESSION['user_data'] = $data;
+            $_SESSION['user'] = [
+                'fullname' => $data[0],
+                'gender' => $data[1],
+                'birthday' => $data[2],
+                'phone' => $data[3],
+                'email' => $data[4],
+                'street' => $data[5],
+                'city' => $data[6],
+                'province' => $data[7],
+                'zipcode' => $data[8],
+                'country' => $data[9],
+                'username' => $data[10],
+                'password' => $data[11],
+                'confirm_password' => $data[11]
+            ];
+
             header("Location: welcome.php");
             exit;
         }
